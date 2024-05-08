@@ -4,6 +4,15 @@ public class Position {
     private char column;
     private int row;
 
+    // Constructor that accepts a column and a row
+    public Position(char column, int row) {
+        if (column < 'a' || column > 'h' || row < 1 || row > 8) {
+            throw new IllegalArgumentException("Invalid board position: " + column + row);
+        }
+        this.column = column;
+        this.row = row;
+    }
+
     public Position(String pos) {
         if (pos.length() != 2) {
             throw new IllegalArgumentException("Invalid board position format");
