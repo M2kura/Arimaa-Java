@@ -1,47 +1,70 @@
 package src.main.java.arimaa.game;
 
-import src.main.java.arimaa.pieces.Piece;
+import src.main.java.arimaa.pieces.*;
 
 public class Board {
-    private static final int SIZE = 8; // Arimaa has an 8x8 board
-    private Piece[][] grid = new Piece[SIZE][SIZE];
-    // Example: Trap positions (c3, c6, f3, f6)
-    private final Position[] traps = {
-            new Position("c3"),
-            new Position("c6"),
-            new Position("f3"),
-            new Position("f6")
-    };
+    public Square[][] grid = new Square[8][8];
 
     public Board() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                boolean isTrap = (col == 2 || col == 5) && (row == 2 || row == 5);
+                grid[col][row] = new Square((char) ('a' + col), row + 1, isTrap);
+            }
+        }
+    }
 
+    public void defaultSetUp(Piece.Color color) {
+        int row = (color == Piece.Color.GOLD) ? 0 : 7;
+        this.placePiece(new Cat(this.grid[0][row], color), this.grid[0][row]);
+        this.placePiece(new Cat(this.grid[7][row], color), this.grid[7][row]);
+        this.placePiece(new Dog(this.grid[1][row], color), this.grid[1][row]);
+        this.placePiece(new Dog(this.grid[6][row], color), this.grid[6][row]);
+        this.placePiece(new Horse(this.grid[2][row], color), this.grid[2][row]);
+        this.placePiece(new Horse(this.grid[5][row], color), this.grid[5][row]);
+        this.placePiece(new Camel(this.grid[3][row], color), this.grid[3][row]);
+        this.placePiece(new Elephant(this.grid[4][row], color), this.grid[4][row]);
+        if (row == 0) for (int i = 0; i < 8; i++) {
+            this.placePiece(new Rabbit(this.grid[i][1], color), this.grid[i][1]);
+        }
+        else for (int i = 0; i < 8; i++) {
+            this.placePiece(new Rabbit(this.grid[i][6], color), this.grid[i][6]);
+        }
     }
 
     // Places a piece at the given position
-    public void placePiece(Piece piece, Position position) {
-        grid[position.getColumn() - 'a'][position.getRow() - 1] = piece;
+    public void placePiece(Piece piece, Square square) {
+        grid[square.getColumn() - 'a'][square.getRow() - 1].setPiece(piece);
     }
 
     // Retrieves the piece at a given position
-    public Piece getPieceAt(Position position) {
-        return grid[position.getColumn() - 'a'][position.getRow() - 1];
+    public Piece getPieceAt(Square square) {
+        return grid[square.getColumn() - 'a'][square.getRow() - 1].getPiece();
     }
 
     // Moves a piece from one position to another
-    public boolean movePiece(Position from, Position to) {
+    public boolean movePiece(Square from, Square to) {
         Piece piece = getPieceAt(from);
         if (piece != null && piece.canMove(to, this)) {
-            grid[to.getColumn() - 'a'][to.getRow() - 1] = piece;
-            grid[from.getColumn() - 'a'][from.getRow() - 1] = null;
+            grid[to.getColumn() - 'a'][to.getRow() - 1].setPiece(piece);
+            grid[from.getColumn() - 'a'][from.getRow() - 1].setPiece(null);
             piece.move(to, this);
+
+            // Check if the piece landed on a trap and if there are no friendly pieces adjacent
+            if (grid[to.getColumn() - 'a'][to.getRow() - 1].isTrap() && !hasFriendlyAdjacent(to, piece.getColor())) {
+                // Remove the piece from the game
+                grid[to.getColumn() - 'a'][to.getRow() - 1].setPiece(null);
+            }
+
             return true;
         }
         return false;
     }
 
-    public boolean isTrap(Position position) {
-        for (Position trap : traps) {
-            if (trap.equals(position)) {
+    private boolean hasFriendlyAdjacent(Square square, Piece.Color color) {
+        for (Square adjacentSquare : square.adjacentSquares(this)) {
+            Piece adjacentPiece = getPieceAt(adjacentSquare);
+            if (adjacentPiece != null && adjacentPiece.getColor() == color) {
                 return true;
             }
         }
@@ -51,15 +74,14 @@ public class Board {
     public void printBoard() {
         System.out.println("  +-----------------+");
 
-        for (int row = SIZE; row > 0; row--) {
-            System.out.print(row + " | ");
-            for (int col = 0; col < SIZE; col++) {
-                Piece piece = grid[col][row - 1];
-                Position currentPosition = new Position((char) ('a' + col), row);
+        for (int row = 7; row > 0; row--) {
+            System.out.print((row + 1) + " | ");
+            for (int col = 0; col < 8; col++) {
+                Piece piece = grid[col][row].getPiece();
 
                 if (piece != null) {
                     System.out.print(piece.getType() + " ");
-                } else if (isTrap(currentPosition)) {
+                } else if (grid[col][row].isTrap()) {
                     System.out.print("x ");
                 } else {
                     System.out.print("  ");
