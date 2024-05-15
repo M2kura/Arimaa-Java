@@ -1,5 +1,7 @@
 package src.main.java.arimaa.game;
 
+import java.util.ArrayList;
+import java.util.List;
 import src.main.java.arimaa.pieces.Piece;
 
 public class Square {
@@ -43,6 +45,22 @@ public class Square {
 
     public boolean equals(Square other) {
         return this.column == other.column && this.row == other.row;
+    }
+
+    public boolean isAdjacent(Square other) {
+        int dx = other.getColumn() - this.column;
+        int dy = other.getRow() - this.row;
+
+        return (Math.abs(dx) == 1 && dy == 0) || (dx == 0 && Math.abs(dy) == 1);
+    }
+
+    public List<Square> adjacentSquares(Board board) {
+        List<Square> adjacentSquares = new ArrayList<>();
+        if (row > 1) adjacentSquares.add(board.grid[column - 'a'][row - 2]);
+        if (row < 8) adjacentSquares.add(board.grid[column - 'a'][row]);
+        if (column > 'a') adjacentSquares.add(board.grid[column - 'b'][row - 1]);
+        if (column < 'h') adjacentSquares.add(board.grid[column - 'a' + 1][row - 1]);
+        return adjacentSquares;
     }
 
     @Override
