@@ -32,6 +32,18 @@ public class Board {
         }
     }
 
+    public void switchPieces(Square square1, Square square2) {
+        Piece piece1 = getPieceAt(square1);
+        Piece piece2 = getPieceAt(square2);
+        // Check if both squares contain a piece and if the pieces have the same color
+        if (piece1 != null && piece2 != null && piece1.getColor() == piece2.getColor()) {
+            placePiece(piece1, square2);
+            placePiece(piece2, square1);
+        } else {
+            System.out.println("Cannot switch pieces. Make sure both squares contain a piece with the same color.");
+        }
+    }
+
     // Places a piece at the given position
     public void placePiece(Piece piece, Square square) {
         grid[square.getColumn() - 'a'][square.getRow() - 1].setPiece(piece);
