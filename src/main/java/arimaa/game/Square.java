@@ -1,5 +1,6 @@
 package src.main.java.arimaa.game;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import src.main.java.arimaa.pieces.Piece;
@@ -9,6 +10,7 @@ public class Square {
     private int row;
     private Piece piece;
     private boolean isTrap;
+    private Color color;
 
     public Square(char column, int row, boolean isTrap) {
         if (column < 'a' || column > 'h' || row < 1 || row > 8) {
@@ -17,6 +19,13 @@ public class Square {
         this.column = column;
         this.row = row;
         this.isTrap = isTrap;
+        if (isTrap) {
+            this.color = new Color(200, 100, 100, 255);
+        } else if ((column - 'a' + row) % 2 == 0) {
+            this.color = new Color(48, 48, 48, 255);
+        } else {
+            this.color = new Color(207, 202, 202, 255);
+        }
     }
 
     public char getColumn() {
@@ -29,6 +38,10 @@ public class Square {
 
     public Piece getPiece() {
         return piece;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public void setPiece(Piece piece) {
@@ -44,10 +57,6 @@ public class Square {
 
     public boolean hasPiece() {
         return piece != null;
-    }
-
-    public boolean equals(Square other) {
-        return this.column == other.column && this.row == other.row;
     }
 
     public boolean isAdjacent(Square other) {

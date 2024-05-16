@@ -15,6 +15,7 @@ public class GameGUI extends JFrame {
         this.boardPanel = new BoardPanel(game);
         this.buttonAndPrintPanel = createButtonAndPrintPanel();
 
+
         // Set up the JFrame
         setTitle("Arimaa Game");
         setSize(800, 800);

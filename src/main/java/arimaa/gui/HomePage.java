@@ -22,18 +22,16 @@ public class HomePage extends JFrame{
         JButton loadButton = new JButton("Load Game");
         JButton exitButton = new JButton("Exit");
         JButton friendButton = new JButton("Play with a Friend");
-        friendButton.setVisible(false); // Initially invisible
+        friendButton.setVisible(false);
         JButton botButton = new JButton("Play with Bot");
-        botButton.setVisible(false); // Initially invisible
+        botButton.setVisible(false);
 
         friendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Create a new game and open the game window
                 Game game = new Game();
                 GameGUI gameGUI = new GameGUI(game);
                 gameGUI.setVisible(true);
-                // Hide the home page
                 setVisible(false);
             }
         });
@@ -47,11 +45,9 @@ public class HomePage extends JFrame{
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Hide the initial buttons
                 startButton.setVisible(false);
                 loadButton.setVisible(false);
                 exitButton.setVisible(false);
-                // Show the game options buttons
                 friendButton.setVisible(true);
                 botButton.setVisible(true);
             }

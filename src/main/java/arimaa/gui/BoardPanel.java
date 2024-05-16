@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import src.main.java.arimaa.game.Game;
+
+import src.main.java.arimaa.game.*;
+import src.main.java.arimaa.pieces.*;
 
 public class BoardPanel extends JPanel {
     private Game game;
@@ -16,17 +18,14 @@ public class BoardPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 int x = e.getX() / (getWidth() / 8);
-                int y = e.getY() / (getHeight() / 8);
+                int y = 7 - e.getY() / (getHeight() / 8);
                 handleSquareClick(x, y);
             }
         });
     }
 
     private void handleSquareClick(int x, int y) {
-        // Handle the square click
-        // This is just a placeholder, you'll need to implement the actual logic
         System.out.println("Square clicked: " + x + ", " + y);
-        // Update the game state and repaint the board
         repaint();
     }
 
@@ -43,16 +42,17 @@ public class BoardPanel extends JPanel {
         int squareSize = Math.min(getWidth(), getHeight()) / 8;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if ((i + j) % 2 == 0) {
-                    g.setColor(Color.LIGHT_GRAY);
-                } else {
-                    g.setColor(Color.DARK_GRAY);
-                }
+                Square square = game.getBoard().grid[i][7-j];
+                g.setColor(square.getColor());
                 g.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
+
+                // Draw the piece at this square, if there is one
+                Piece piece = square.getPiece();
+                if (piece != null) {
+                    Image pieceImage = new ImageIcon("src/main/resources/images/pieces/" + Character.toUpperCase(piece.getType()) + "_" + piece.getColor() + ".png").getImage();
+                    g.drawImage(pieceImage, i * squareSize, j * squareSize, squareSize, squareSize, this);
+                }
             }
         }
-
-        // Draw the game state
-        // This is just a placeholder, you'll need to implement the actual drawing
     }
 }
