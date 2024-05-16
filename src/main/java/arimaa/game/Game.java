@@ -19,19 +19,40 @@ public class Game {
         this.moveHistory = new ArrayList<>();
         this.isGameOver = false;
         this.turnCount = 0;
-
         setupGame();
     }
 
-    private void setupGame() {
-        // Initialize both players (Gold and Silver) with pieces
-        players[0] = new Player(Piece.Color.GOLD);
-        players[1] = new Player(Piece.Color.SILVER);
+    public Board getBoard() {
+        return board;
+    }
 
-        // Set up the initial board positions for all pieces based on Arimaa rules
-        // Example:
-        // board.placePiece(new Elephant(new Position('a', 1), Piece.Color.GOLD), new Position('a', 1));
-        // Add more pieces...
+    public void setupGame() {
+        // Initialize both players (Gold and Silver) with pieces
+        players[0] = new Player(Piece.Color.GOLD, board);
+        players[1] = new Player(Piece.Color.SILVER, board);
+    }
+
+    public void startGame() {
+        setupPieces(players[0]);
+        setupPieces(players[1]);
+        currentPlayerIndex = 0;
+        // Game loop
+        while (!isGameOver) {
+            Player currentPlayer = getCurrentPlayer();
+            System.out.println("It's " + currentPlayer.getColor() + "'s turn.");
+
+            // Assume getMove() is a method in Player class that returns a Move object
+            Move move = currentPlayer.getMove();
+
+            // Attempt to make the move
+            if (makeMove(move)) {
+                System.out.println(currentPlayer.getColor() + " made a move.");
+            } else {
+                System.out.println("Invalid move. Try again.");
+            }
+        }
+
+        System.out.println("Game over!");
     }
 
     public boolean makeMove(Move move) {
@@ -60,6 +81,28 @@ public class Game {
         // Implement the logic to check for winning conditions
         // Example: Rabbit reaches the opposite side, or the opponent is immobilized
         // Set `isGameOver` to true if a player wins
+
+        // Check if a gold rabbit has reached the last row
+        for (int col = 0; col < 8; col++) {
+            Piece piece = board.getPieceAt(board.grid['a' + col][7]);
+            if (piece instanceof Rabbit && piece.getColor() == Piece.Color.GOLD) {
+                isGameOver = true;
+                System.out.println("Gold player wins!");
+                return;
+            }
+        }
+        for (int col = 0; col < 8; col++) {
+            Piece piece = board.getPieceAt(board.grid['a' + col][0]);
+            if (piece instanceof Rabbit && piece.getColor() == Piece.Color.SILVER) {
+                isGameOver = true;
+                System.out.println("Silver player wins!");
+                return;
+            }
+        }
+    }
+
+    public void setupPieces(Player player) {
+        //
     }
 
     public Player getCurrentPlayer() {
