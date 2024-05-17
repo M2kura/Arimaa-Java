@@ -25,28 +25,28 @@ public class BoardPanel extends JPanel {
     }
 
     private void handleSquareClick(int x, int y) {
-        System.out.println("Square clicked: " + x + ", " + y);
+        Square clickedSquare = game.getBoard().grid[x][y];
+        System.out.println("Square clicked: " + clickedSquare.getColumn() + clickedSquare.getRow());
+        if (game.isSetupPhase()) {
+            game.getCurrentPlayer().addSquareForSwitch(clickedSquare, game.getBoard());
+        }
         repaint();
     }
 
     @Override
     public Dimension getPreferredSize() {
-        // Set the preferred size of the board panel
         return new Dimension(600, 600);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Draw the board as a grid
         int squareSize = Math.min(getWidth(), getHeight()) / 8;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Square square = game.getBoard().grid[i][7-j];
                 g.setColor(square.getColor());
                 g.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
-
-                // Draw the piece at this square, if there is one
                 Piece piece = square.getPiece();
                 if (piece != null) {
                     Image pieceImage = new ImageIcon("src/main/resources/images/pieces/" + Character.toUpperCase(piece.getType()) + "_" + piece.getColor() + ".png").getImage();

@@ -1,9 +1,9 @@
 package src.main.java.arimaa;
 
-import src.main.java.arimaa.gui.HomePage;
+import src.main.java.arimaa.gui.MainPage;
 
 public class Main {
     public static void main(String[] args) {
-        HomePage homePage = new HomePage();
+        MainPage mainPage = new MainPage();
     }
 }

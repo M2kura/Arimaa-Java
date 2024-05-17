@@ -7,16 +7,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class HomePage extends JFrame{
+public class MainPage extends JFrame{
     private Image backgroundImage;
 
-    public HomePage() {
+    public MainPage() {
         setTitle("Arimaa Game");
         setSize(800, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new FlowLayout());
-
-//        backgroundImage = new ImageIcon("src/main/resources/images/homepage_bg.jpeg").getImage();
 
         JButton startButton = new JButton("Start New Game");
         JButton loadButton = new JButton("Load Game");
@@ -74,11 +72,4 @@ public class HomePage extends JFrame{
 
         setVisible(true);
     }
-
-//    @Override
-//    public void paint(Graphics g) {
-//        super.paint(g);
-//        // Draw the background image
-//        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-//    }
 }

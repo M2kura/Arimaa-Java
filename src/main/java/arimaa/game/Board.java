@@ -35,7 +35,6 @@ public class Board {
     public void switchPieces(Square square1, Square square2) {
         Piece piece1 = getPieceAt(square1);
         Piece piece2 = getPieceAt(square2);
-        // Check if both squares contain a piece and if the pieces have the same color
         if (piece1 != null && piece2 != null && piece1.getColor() == piece2.getColor()) {
             placePiece(piece1, square2);
             placePiece(piece2, square1);
@@ -44,17 +43,14 @@ public class Board {
         }
     }
 
-    // Places a piece at the given position
     public void placePiece(Piece piece, Square square) {
         grid[square.getColumn() - 'a'][square.getRow() - 1].setPiece(piece);
     }
 
-    // Retrieves the piece at a given position
     public Piece getPieceAt(Square square) {
         return grid[square.getColumn() - 'a'][square.getRow() - 1].getPiece();
     }
 
-    // Moves a piece from one position to another
     public boolean movePiece(Square from, Square to) {
         Piece piece = getPieceAt(from);
         if (piece != null && piece.canMove(to, this)) {

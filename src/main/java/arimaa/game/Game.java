@@ -12,6 +12,7 @@ public class Game {
     private List<Move> moveHistory;
     private boolean isGameOver;
     private int turnCount;
+    private boolean setupPhase = true;
 
     public Game() {
         this.board = new Board();
@@ -30,12 +31,22 @@ public class Game {
         // Initialize both players (Gold and Silver) with pieces
         players[0] = new Player(Piece.Color.GOLD, board);
         players[1] = new Player(Piece.Color.SILVER, board);
+        currentPlayerIndex = 0;
     }
 
     public void startGame() {
-        setupPieces(players[0]);
-        setupPieces(players[1]);
-        currentPlayerIndex = 0;
+        while (setupPhase){
+            if (players[0].submittedSetup() && players[1].submittedSetup()) {
+                setupPhase = false;
+                System.out.println("Setup phase is over.");
+            } else {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         // Game loop
         while (!isGameOver) {
             Player currentPlayer = getCurrentPlayer();
@@ -73,8 +84,8 @@ public class Game {
         return false;
     }
 
-    private void switchTurns() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % 2; // Toggle between 0 and 1
+    public void switchTurns() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % 2;
     }
 
     private void checkWinConditions() {
@@ -101,8 +112,9 @@ public class Game {
         }
     }
 
-    public void setupPieces(Player player) {
-        //
+    public void submitPlayerSetup() {
+        players[currentPlayerIndex].submitSetup = true;
+        System.out.println("Player " + (currentPlayerIndex+1) + " submitted their pieces.");
     }
 
     public Player getCurrentPlayer() {
@@ -115,5 +127,9 @@ public class Game {
 
     public int getTurnCount() {
         return turnCount;
+    }
+
+    public boolean isSetupPhase() {
+        return setupPhase;
     }
 }
