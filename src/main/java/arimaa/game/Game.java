@@ -15,16 +15,12 @@ public class Game {
     private boolean setupPhase = true;
 
     public Game() {
-        this.board = new Board();
+        this.board = new Board(this);
         this.players = new Player[2];
         this.moveHistory = new ArrayList<>();
         this.isGameOver = false;
-        this.turnCount = 0;
+        this.turnCount = 1;
         setupGame();
-    }
-
-    public Board getBoard() {
-        return board;
     }
 
     public void setupGame() {
@@ -32,10 +28,11 @@ public class Game {
         players[0] = new Player(Piece.Color.GOLD, board);
         players[1] = new Player(Piece.Color.SILVER, board);
         currentPlayerIndex = 0;
+        turnCount = 1;
     }
 
     public void startGame() {
-        while (setupPhase){
+        while (setupPhase) {
             if (players[0].submittedSetup() && players[1].submittedSetup()) {
                 setupPhase = false;
                 System.out.println("Setup phase is over.");
@@ -49,39 +46,37 @@ public class Game {
         }
         // Game loop
         while (!isGameOver) {
-            Player currentPlayer = getCurrentPlayer();
-            System.out.println("It's " + currentPlayer.getColor() + "'s turn.");
-
-            // Assume getMove() is a method in Player class that returns a Move object
-            Move move = currentPlayer.getMove();
-
-            // Attempt to make the move
-            if (makeMove(move)) {
-                System.out.println(currentPlayer.getColor() + " made a move.");
-            } else {
-                System.out.println("Invalid move. Try again.");
+            for (int i = 0; i < 2; i++) {
+                checkWinConditions();
+                if (!isGameOver){
+                    Player currentPlayer = getCurrentPlayer();
+                    System.out.println("It's " + currentPlayer.getColor() + "'s turn.");
+                    makeMove(currentPlayer);
+                    while (!currentPlayer.submitMove) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    currentPlayer.submitMove = false;
+                    currentPlayer.currentTurnMoves = 0;
+                    switchTurns();
+                }
             }
+            turnCount++;
         }
-
         System.out.println("Game over!");
     }
 
-    public boolean makeMove(Move move) {
-        if (isGameOver) {
-            System.out.println("The game is already over!");
-            return false;
+    public void makeMove(Player player) {
+        while (!player.submitMove) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
-        // Attempt to move the piece on the board
-        if (board.movePiece(move.getFrom(), move.getTo())) {
-            moveHistory.add(move); // Record the move in history
-            turnCount++;
-            switchTurns(); // Switch to the other player's turn
-            checkWinConditions();
-            return true;
-        }
-
-        return false;
     }
 
     public void switchTurns() {
@@ -93,18 +88,17 @@ public class Game {
         // Example: Rabbit reaches the opposite side, or the opponent is immobilized
         // Set `isGameOver` to true if a player wins
 
-        // Check if a gold rabbit has reached the last row
         for (int col = 0; col < 8; col++) {
-            Piece piece = board.getPieceAt(board.grid['a' + col][7]);
-            if (piece instanceof Rabbit && piece.getColor() == Piece.Color.GOLD) {
+            Piece piece = board.getPieceAt(board.grid[col][7]);
+            if (piece != null && piece.getType() == 'R') {
                 isGameOver = true;
                 System.out.println("Gold player wins!");
                 return;
             }
         }
         for (int col = 0; col < 8; col++) {
-            Piece piece = board.getPieceAt(board.grid['a' + col][0]);
-            if (piece instanceof Rabbit && piece.getColor() == Piece.Color.SILVER) {
+            Piece piece = board.getPieceAt(board.grid[col][0]);
+            if (piece != null && piece.getType() == 'r') {
                 isGameOver = true;
                 System.out.println("Silver player wins!");
                 return;
@@ -117,8 +111,21 @@ public class Game {
         System.out.println("Player " + (currentPlayerIndex+1) + " submitted their pieces.");
     }
 
+    public void submitPlayerMove() {
+        if (getCurrentPlayer().currentTurnMoves > 0 && getCurrentPlayer().currentTurnMoves < 5) {
+            getCurrentPlayer().submitMove = true;
+            System.out.println("Player " + (currentPlayerIndex + 1) + " submitted their move.");
+        } else {
+            System.out.println("You are supposed to do at least 1 and at most 4 moves per turn");
+        }
+    }
+
     public Player getCurrentPlayer() {
         return players[currentPlayerIndex];
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     public boolean isGameOver() {
@@ -131,5 +138,9 @@ public class Game {
 
     public boolean isSetupPhase() {
         return setupPhase;
+    }
+
+    public Player getPlayer (int index) {
+        return players[index];
     }
 }
