@@ -39,24 +39,36 @@ public class Piece {
         return color;
     }
 
-    public boolean push(Piece other, Square newSquare, Board board) {
-        if (isAdjacent(other) && isWeaker(other) && board.getPieceAt(newSquare) == null && newSquare.isAdjacent(other.square)) {
-            Square currentSquare = other.square;
-            other.move(newSquare, board);
-            this.move(currentSquare, board);
-            return true;
-        }
-        return false;
+    public int getStrength() {
+        return strength;
     }
 
-    public boolean pull(Piece other, Square newSquare, Board board) {
-        if (isAdjacent(other) && isWeaker(other) && board.getPieceAt(newSquare) == null && newSquare.isAdjacent(this.square)) {
-            Square currentSquare = this.square;
-            this.move(newSquare, board);
-            other.move(currentSquare, board);
-            return true;
+    public void push(Piece other, Square newSquare, Board board) {
+        if (isWeaker(other)) {
+            if (other.canMove(newSquare, board)){
+                Square currentSquare = other.square;
+                board.movePiece(other.square, newSquare);
+                board.movePiece(this.square, currentSquare);
+            } else {
+                System.out.println("Pushed piece must move to an adjacent square.");
+            }
+        } else {
+            System.out.println("Cannot push a piece of equal or greater strength.");
         }
-        return false;
+    }
+
+    public void pull(Piece other, Square newSquare, Board board) {
+        if (isWeaker(other)) {
+            if (this.canMove(newSquare, board)){
+                Square currentSquare = this.square;
+                board.movePiece(this.square, newSquare);
+                board.movePiece(other.square, currentSquare);
+            } else {
+                System.out.println("Your piece must move to an adjacent square when pulling other piece.");
+            }
+        } else {
+            System.out.println("Cannot pull a piece of equal or greater strength.");
+        }
     }
 
     private boolean isAdjacent(Piece other) {
@@ -70,20 +82,37 @@ public class Piece {
         return this.strength > other.strength;
     }
 
-    public boolean canMove(Square newSquare, Board board) {
-        if (this.getSquare().isAdjacent(newSquare) && board.getPieceAt(newSquare) == null) {
-            if (type == 'r' || type == 'R') {
-                return (color != Color.GOLD || newSquare.getRow() >= square.getRow()) &&
-                        (color != Color.SILVER || newSquare.getRow() <= square.getRow()); // Rabbits cannot move backwards
+    public boolean isFrozen(Board board) {
+        for (Square adjacentSquare : square.adjacentSquares(board)) {
+            Piece adjacentPiece = board.getPieceAt(adjacentSquare);
+            if (adjacentPiece != null && adjacentPiece.getColor() != color && adjacentPiece.getStrength() > strength && !hasFriendlyAdjacent(board)) {
+                return true;
             }
-            return true;
         }
         return false;
     }
 
-    // Updates the position after a successful move
-    public void move(Square newSquare, Board board) {
-        this.square = newSquare;
+    public boolean hasFriendlyAdjacent(Board board) {
+        for (Square adjacentSquare : square.adjacentSquares(board)) {
+            Piece adjacentPiece = board.getPieceAt(adjacentSquare);
+            if (adjacentPiece != null && adjacentPiece.getColor() == color) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canMove(Square newSquare, Board board) {
+        if (this.getSquare().isAdjacent(newSquare) && board.getPieceAt(newSquare) == null) {
+            if (type == 'R' && board.game.getCurrentPlayer().getColor() == Color.GOLD) {
+                return newSquare.getRow() >= square.getRow();
+            }
+            if (type == 'r' && board.game.getCurrentPlayer().getColor() == Color.SILVER) {
+                return newSquare.getRow() <= square.getRow();
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
