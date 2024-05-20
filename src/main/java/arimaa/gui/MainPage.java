@@ -23,12 +23,27 @@ public class MainPage extends JFrame{
         friendButton.setVisible(false);
         JButton botButton = new JButton("Play with Bot");
         botButton.setVisible(false);
+        JButton backButton = new JButton("Back");
+        backButton.setVisible(false);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startButton.setVisible(true);
+                loadButton.setVisible(true);
+                exitButton.setVisible(true);
+                friendButton.setVisible(false);
+                botButton.setVisible(false);
+                backButton.setVisible(false);
+            }
+        });
 
         friendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game game = new Game();
-                GameGUI gameGUI = new GameGUI(game);
+                GameGUI gameGUI = new GameGUI(game, MainPage.this);
+                gameGUI.startGame();
                 gameGUI.setVisible(true);
                 setVisible(false);
             }
@@ -48,6 +63,7 @@ public class MainPage extends JFrame{
                 exitButton.setVisible(false);
                 friendButton.setVisible(true);
                 botButton.setVisible(true);
+                backButton.setVisible(true);
             }
         });
         loadButton.addActionListener(new ActionListener() {
@@ -69,6 +85,7 @@ public class MainPage extends JFrame{
         add(exitButton);
         add(friendButton);
         add(botButton);
+        add(backButton);
 
         setVisible(true);
     }
