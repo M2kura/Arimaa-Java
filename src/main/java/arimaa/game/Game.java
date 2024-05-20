@@ -84,10 +84,6 @@ public class Game {
     }
 
     private void checkWinConditions() {
-        // Implement the logic to check for winning conditions
-        // Example: Rabbit reaches the opposite side, or the opponent is immobilized
-        // Set `isGameOver` to true if a player wins
-
         for (int col = 0; col < 8; col++) {
             Piece piece = board.getPieceAt(board.grid[col][7]);
             if (piece != null && piece.getType() == 'R') {
@@ -103,6 +99,54 @@ public class Game {
                 System.out.println("Silver player wins!");
                 return;
             }
+        }
+        int goldRabbits = 0;
+        int silverRabbits = 0;
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                Piece piece = board.getPieceAt(board.grid[col][row]);
+                if (piece != null){
+                    if (piece.getType() == 'R') {
+                        goldRabbits++;
+                    } else if (piece.getType() == 'r') {
+                        silverRabbits++;
+                    }
+                }
+            }
+        }
+        if (goldRabbits == 0) {
+            isGameOver = true;
+            System.out.println("Silver player wins!");
+            return;
+        } else if (silverRabbits == 0) {
+            isGameOver = true;
+            System.out.println("Gold player wins!");
+            return;
+        }
+        boolean goldCanMove = false;
+        boolean silverCanMove = false;
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                Piece piece = board.getPieceAt(board.grid[col][row]);
+                if (piece != null){
+                    for (Square square : piece.getSquare().adjacentSquares(board)) {
+                        if (piece.canMove(square, board)) {
+                            if (piece.getColor() == Piece.Color.GOLD) {
+                                goldCanMove = true;
+                            } else {
+                                silverCanMove = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!goldCanMove) {
+            isGameOver = true;
+            System.out.println("Silver player wins!");
+        } else if (!silverCanMove) {
+            isGameOver = true;
+            System.out.println("Gold player wins!");
         }
     }
 
