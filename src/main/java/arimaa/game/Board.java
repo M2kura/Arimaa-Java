@@ -4,8 +4,10 @@ import src.main.java.arimaa.pieces.*;
 
 public class Board {
     public Square[][] grid = new Square[8][8];
+    public Game game;
 
-    public Board() {
+    public Board(Game game) {
+        this.game = game;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 boolean isTrap = (col == 2 || col == 5) && (row == 2 || row == 5);
@@ -51,32 +53,29 @@ public class Board {
         return grid[square.getColumn() - 'a'][square.getRow() - 1].getPiece();
     }
 
-    public boolean movePiece(Square from, Square to) {
+    public void movePiece(Square from, Square to) {
         Piece piece = getPieceAt(from);
-        if (piece != null && piece.canMove(to, this)) {
+        if (piece.canMove(to, this)){
             grid[to.getColumn() - 'a'][to.getRow() - 1].setPiece(piece);
             grid[from.getColumn() - 'a'][from.getRow() - 1].setPiece(null);
-            piece.move(to, this);
-
-            // Check if the piece landed on a trap and if there are no friendly pieces adjacent
-            if (grid[to.getColumn() - 'a'][to.getRow() - 1].isTrap() && !hasFriendlyAdjacent(to, piece.getColor())) {
-                // Remove the piece from the game
-                grid[to.getColumn() - 'a'][to.getRow() - 1].setPiece(null);
-            }
-
-            return true;
+            checkTraps();
+        } else {
+            System.out.println("Pieces can only move to adjacent squares.");
         }
-        return false;
     }
 
-    private boolean hasFriendlyAdjacent(Square square, Piece.Color color) {
-        for (Square adjacentSquare : square.adjacentSquares(this)) {
-            Piece adjacentPiece = getPieceAt(adjacentSquare);
-            if (adjacentPiece != null && adjacentPiece.getColor() == color) {
-                return true;
+    public void checkTraps() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Square square = grid[col][row];
+                if (square.isTrap()) {
+                    Piece piece = getPieceAt(square);
+                    if (piece != null && !piece.hasFriendlyAdjacent(this)) {
+                        square.setPiece(null);
+                    }
+                }
             }
         }
-        return false;
     }
 
     public void printBoard() {
