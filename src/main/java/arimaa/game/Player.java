@@ -1,13 +1,19 @@
 package src.main.java.arimaa.game;
 
 import src.main.java.arimaa.pieces.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    public Piece.Color color;
+    private Piece.Color color;
     public boolean submitSetup = false;
+    public boolean submitMove = false;
+    public int currentTurnMoves = 0;
     private Square[] squaresForSwitch = new Square[2];
     private int squareIndex = 0;
+    private Piece pieceForPP;
+    private Piece pieceToMove;
 
     public Player(Piece.Color color, Board board) {
         this.color = color;
@@ -18,9 +24,50 @@ public class Player {
         return color;
     }
 
-    public Move getMove() {
-        // Implement logic to get a move from the player
-        return null;
+    public void movePiece(Square square, Board board) {
+        if (pieceToMove != null) {
+            if (currentTurnMoves < 4){
+                if (!pieceToMove.isFrozen(board)) {
+                    if (pieceForPP != null) {
+                        if (pieceForPP.getSquare().isAdjacent(pieceToMove.getSquare())) {
+                            if (currentTurnMoves < 3) {
+                                if (square.isAdjacent(pieceForPP.getSquare())) {
+                                    pieceToMove.push(pieceForPP, square, board);
+                                } else {
+                                    pieceToMove.pull(pieceForPP, square, board);
+                                }
+                                currentTurnMoves += 2;
+                            } else {
+                                System.out.println("You must have at least 2 moves left for push/pull.");
+                            }
+                        } else {
+                            System.out.println("The opponents piece you selected to push/pull is not adjacent to your piece.");
+                        }
+                    } else {
+                        board.movePiece(pieceToMove.getSquare(), square);
+                        currentTurnMoves++;
+                    }
+                } else {
+                    System.out.println("The piece is frozen and cannot move.");
+                }
+            } else {
+                System.out.println("You have riched the limit of 4 moves per turn.");
+            }
+        }
+        emptyPieceSelection();
+    }
+
+    public void setPieceForPP (Piece piece) {
+        pieceForPP = piece;
+    }
+
+    public void setPieceToMove (Piece piece) {
+        pieceToMove = piece;
+    }
+
+    private void emptyPieceSelection() {
+        pieceForPP = null;
+        pieceToMove = null;
     }
 
     public void addSquareForSwitch(Square square, Board board) {

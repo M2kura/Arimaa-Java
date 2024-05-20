@@ -26,9 +26,22 @@ public class BoardPanel extends JPanel {
 
     private void handleSquareClick(int x, int y) {
         Square clickedSquare = game.getBoard().grid[x][y];
+        Player currentPlayer = game.getCurrentPlayer();
         System.out.println("Square clicked: " + clickedSquare.getColumn() + clickedSquare.getRow());
         if (game.isSetupPhase()) {
-            game.getCurrentPlayer().addSquareForSwitch(clickedSquare, game.getBoard());
+            currentPlayer.addSquareForSwitch(clickedSquare, game.getBoard());
+        } else {
+            if (clickedSquare.hasPiece()) {
+                Piece piece = clickedSquare.getPiece();
+                if (piece.getColor() != currentPlayer.getColor()) {
+                    currentPlayer.setPieceForPP(piece);
+                } else {
+                    currentPlayer.setPieceToMove(piece);
+                }
+            } else {
+                currentPlayer.movePiece(clickedSquare, game.getBoard());
+                repaint();
+            }
         }
         repaint();
     }
