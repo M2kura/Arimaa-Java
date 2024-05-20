@@ -11,12 +11,14 @@ import java.io.PrintStream;
 import src.main.java.arimaa.game.*;
 
 public class ControlPanel extends JPanel{
-    private JFrame parentFrame;
+    private MainPage mainPage;
+    private GameGUI gameGUI;
     private Game game;
     private JTextArea textArea;
 
-    public ControlPanel(JFrame parentFrame, Game game) {
-        this.parentFrame = parentFrame;
+    public ControlPanel(GameGUI mageGUI, Game game, MainPage mainPage) {
+        this.mainPage = mainPage;
+        this.gameGUI = gameGUI;
         this.game = game;
         this.textArea = new JTextArea(5, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -30,13 +32,23 @@ public class ControlPanel extends JPanel{
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainPage mainPage = new MainPage();
+                if (gameGUI != null) {
+                    gameGUI.stopGame();
+                    gameGUI.disposeGUI();
+                }
                 mainPage.setVisible(true);
-                parentFrame.setVisible(false);
             }
         });
 
-        JButton submitButton = new JButton("Submit pieces setup");
+        JButton submitButton = getjButton(game);
+
+        add(exitButton);
+        add(submitButton);
+        add(scrollPane);
+    }
+
+    private static JButton getjButton(Game game) {
+        JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -44,16 +56,19 @@ public class ControlPanel extends JPanel{
                 if (game.isSetupPhase()) {
                     game.submitPlayerSetup();
                     game.switchTurns();
+                } else {
+                    if (game.getCurrentPlayer().currentTurnMoves > 0){
+                        game.submitPlayerMove();
+                    } else {
+                        System.out.println("You must make at least one move.");
+                    }
                 }
             }
         });
-
-        add(exitButton);
-        add(submitButton);
-        add(scrollPane);
+        return submitButton;
     }
 
-    public class CustomOutputStream extends OutputStream {
+    public static class CustomOutputStream extends OutputStream {
         private JTextArea textArea;
 
         public CustomOutputStream(JTextArea textArea) {
