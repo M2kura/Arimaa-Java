@@ -3,7 +3,6 @@ package src.main.java.arimaa.game;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import src.main.java.arimaa.pieces.Piece;
 
 public class Square {
     private char column;

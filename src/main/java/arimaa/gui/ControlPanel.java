@@ -32,11 +32,21 @@ public class ControlPanel extends JPanel{
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (gameGUI != null) {
-                    gameGUI.stopGame();
-                    gameGUI.disposeGUI();
+                int response = JOptionPane.showConfirmDialog(null, "Do you want to save the game before exiting?", "Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    game.saveGame();
+                    if (gameGUI != null) {
+                        gameGUI.stopGame();
+                        gameGUI.disposeGUI();
+                    }
+                    mainPage.setVisible(true);
+                } else if (response == JOptionPane.NO_OPTION) {
+                    if (gameGUI != null) {
+                        gameGUI.stopGame();
+                        gameGUI.disposeGUI();
+                    }
+                    mainPage.setVisible(true);
                 }
-                mainPage.setVisible(true);
             }
         });
 
@@ -57,10 +67,10 @@ public class ControlPanel extends JPanel{
                     game.submitPlayerSetup();
                     game.switchTurns();
                 } else {
-                    if (game.getCurrentPlayer().currentTurnMoves > 0){
-                        game.submitPlayerMove();
+                    if (game.isGameOver()) {
+                        System.out.println("The game is already over!");
                     } else {
-                        System.out.println("You must make at least one move.");
+                        game.submitPlayerMove();
                     }
                 }
             }

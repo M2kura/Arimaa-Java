@@ -1,6 +1,4 @@
-package src.main.java.arimaa.pieces;
-
-import src.main.java.arimaa.game.*;
+package src.main.java.arimaa.game;
 
 public class Piece {
     public enum Color {

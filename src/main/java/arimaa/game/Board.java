@@ -1,7 +1,5 @@
 package src.main.java.arimaa.game;
 
-import src.main.java.arimaa.pieces.*;
-
 public class Board {
     public Square[][] grid = new Square[8][8];
     public Game game;
@@ -56,6 +54,7 @@ public class Board {
     public void movePiece(Square from, Square to) {
         Piece piece = getPieceAt(from);
         if (piece.canMove(to, this)){
+            this.game.movePiece(piece, from, to);
             grid[to.getColumn() - 'a'][to.getRow() - 1].setPiece(piece);
             grid[from.getColumn() - 'a'][from.getRow() - 1].setPiece(null);
             checkTraps();
@@ -71,6 +70,7 @@ public class Board {
                 if (square.isTrap()) {
                     Piece piece = getPieceAt(square);
                     if (piece != null && !piece.hasFriendlyAdjacent(this)) {
+                        this.game.removePiece(piece, square);
                         square.setPiece(null);
                     }
                 }

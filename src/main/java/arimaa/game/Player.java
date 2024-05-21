@@ -1,10 +1,5 @@
 package src.main.java.arimaa.game;
 
-import src.main.java.arimaa.pieces.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player {
     private Piece.Color color;
     public boolean submitSetup = false;
@@ -51,7 +46,7 @@ public class Player {
                     System.out.println("The piece is frozen and cannot move.");
                 }
             } else {
-                System.out.println("You have riched the limit of 4 moves per turn.");
+                System.out.println("You cannot make more then 4 moves per turn.");
             }
         }
         emptyPieceSelection();

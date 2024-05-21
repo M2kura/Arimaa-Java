@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import src.main.java.arimaa.game.*;
-import src.main.java.arimaa.pieces.*;
 
 public class BoardPanel extends JPanel {
     private Game game;
@@ -30,6 +29,7 @@ public class BoardPanel extends JPanel {
         System.out.println("Square clicked: " + clickedSquare.getColumn() + clickedSquare.getRow());
         if (game.isSetupPhase()) {
             currentPlayer.addSquareForSwitch(clickedSquare, game.getBoard());
+            repaint();
         } else {
             if (clickedSquare.hasPiece()) {
                 Piece piece = clickedSquare.getPiece();
@@ -43,7 +43,6 @@ public class BoardPanel extends JPanel {
                 repaint();
             }
         }
-        repaint();
     }
 
     @Override
