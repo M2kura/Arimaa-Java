@@ -10,14 +10,41 @@ public class Piece {
     protected final Color color;
     protected final int strength;
 
-    public Piece(Square square, char type, Color color, int strength) {
+    public Piece(Square square, char type, Color color) {
         this.square = square;
         this.color = color;
-        this.strength = strength;
         if (color == Color.GOLD) {
             this.type = Character.toUpperCase(type);
         } else {
             this.type = Character.toLowerCase(type);
+        }
+        switch (type) {
+            case 'r':
+            case 'R':
+                this.strength = 1;
+                break;
+            case 'c':
+            case 'C':
+                this.strength = 2;
+                break;
+            case 'd':
+            case 'D':
+                this.strength = 3;
+                break;
+            case 'h':
+            case 'H':
+                this.strength = 4;
+                break;
+            case 'm':
+            case 'M':
+                this.strength = 5;
+                break;
+            case 'e':
+            case 'E':
+                this.strength = 6;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid piece type: " + type);
         }
     }
 

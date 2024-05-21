@@ -44,4 +44,8 @@ public class GameGUI extends JFrame {
     public void disposeGUI() {
         this.dispose();
     }
+
+    public void refreshBoard() {
+        boardPanel.repaint();
+    }
 }

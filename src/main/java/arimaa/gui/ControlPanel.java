@@ -11,15 +11,9 @@ import java.io.PrintStream;
 import src.main.java.arimaa.game.*;
 
 public class ControlPanel extends JPanel{
-    private MainPage mainPage;
-    private GameGUI gameGUI;
-    private Game game;
     private JTextArea textArea;
 
-    public ControlPanel(GameGUI mageGUI, Game game, MainPage mainPage) {
-        this.mainPage = mainPage;
-        this.gameGUI = gameGUI;
-        this.game = game;
+    public ControlPanel(GameGUI gameGUI, Game game, MainPage mainPage) {
         this.textArea = new JTextArea(5, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
         textArea.setEditable(false);
@@ -28,6 +22,29 @@ public class ControlPanel extends JPanel{
         System.setOut(printStream);
 
 
+        JButton exitButton = getjButton(game, mainPage, gameGUI);
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!game.isSetupPhase()) {
+                    game.undoLastMove();
+                    gameGUI.refreshBoard();
+                    System.out.println("Move has been taken back.");
+                }
+            }
+        });
+        
+        JButton submitButton = getjButton(game);
+
+        add(exitButton);
+        add(backButton);
+        add(submitButton);
+        add(scrollPane);
+    }
+
+    private static JButton getjButton(Game game, MainPage mainPage, GameGUI gameGUI) {
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(new ActionListener() {
             @Override
@@ -49,12 +66,7 @@ public class ControlPanel extends JPanel{
                 }
             }
         });
-
-        JButton submitButton = getjButton(game);
-
-        add(exitButton);
-        add(submitButton);
-        add(scrollPane);
+        return exitButton;
     }
 
     private static JButton getjButton(Game game) {

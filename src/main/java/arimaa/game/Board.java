@@ -16,19 +16,19 @@ public class Board {
 
     public void defaultSetUp(Piece.Color color) {
         int row = (color == Piece.Color.GOLD) ? 0 : 7;
-        this.placePiece(new Piece(this.grid[0][row], 'C', color, 2), this.grid[0][row]);
-        this.placePiece(new Piece(this.grid[7][row], 'C', color, 2), this.grid[7][row]);
-        this.placePiece(new Piece(this.grid[1][row], 'D', color, 3), this.grid[1][row]);
-        this.placePiece(new Piece(this.grid[6][row], 'D', color, 3), this.grid[6][row]);
-        this.placePiece(new Piece(this.grid[2][row], 'H', color, 4), this.grid[2][row]);
-        this.placePiece(new Piece(this.grid[5][row], 'H', color, 4), this.grid[5][row]);
-        this.placePiece(new Piece(this.grid[3][row], 'M', color, 5), this.grid[3][row]);
-        this.placePiece(new Piece(this.grid[4][row], 'E', color, 6), this.grid[4][row]);
+        this.placePiece(new Piece(this.grid[0][row], 'C', color), this.grid[0][row]);
+        this.placePiece(new Piece(this.grid[7][row], 'C', color), this.grid[7][row]);
+        this.placePiece(new Piece(this.grid[1][row], 'D', color), this.grid[1][row]);
+        this.placePiece(new Piece(this.grid[6][row], 'D', color), this.grid[6][row]);
+        this.placePiece(new Piece(this.grid[2][row], 'H', color), this.grid[2][row]);
+        this.placePiece(new Piece(this.grid[5][row], 'H', color), this.grid[5][row]);
+        this.placePiece(new Piece(this.grid[3][row], 'M', color), this.grid[3][row]);
+        this.placePiece(new Piece(this.grid[4][row], 'E', color), this.grid[4][row]);
         if (row == 0) for (int i = 0; i < 8; i++) {
-            this.placePiece(new Piece(this.grid[i][1], 'R', color, 1), this.grid[i][1]);
+            this.placePiece(new Piece(this.grid[i][1], 'R', color), this.grid[i][1]);
         }
         else for (int i = 0; i < 8; i++) {
-            this.placePiece(new Piece(this.grid[i][6], 'R', color, 1), this.grid[i][6]);
+            this.placePiece(new Piece(this.grid[i][6], 'R', color), this.grid[i][6]);
         }
     }
 

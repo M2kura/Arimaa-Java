@@ -68,7 +68,6 @@ public class Game {
                     switchTurns();
                 }
             }
-            turnCount++;
         }
         System.out.println("Game over!");
     }
@@ -171,6 +170,9 @@ public class Game {
         if (getCurrentPlayer().currentTurnMoves > 0 && getCurrentPlayer().currentTurnMoves < 5) {
             getCurrentPlayer().submitMove = true;
             System.out.println("Player " + (currentPlayerIndex + 1) + " submitted their move.");
+            if (getCurrentPlayer().getColor() == Piece.Color.SILVER) {
+                turnCount ++;
+            }
         } else {
             System.out.println("You are supposed to do at least 1 and at most 4 moves per turn");
         }
@@ -203,6 +205,65 @@ public class Game {
 
     public void removePiece(Piece piece, Square from) {
         addToMove(" " + piece.getType() + from.toString() + "x");
+    }
+
+    public void undoLastMove() {
+        String lastMoveString = moves.removeLast();
+        String[] individualMoves = lastMoveString.split(" ");
+        if (isSetupPhase() || (turnCount == 2 && individualMoves[0].endsWith("g") && individualMoves.length == 1)) {
+            return;
+        }
+        if (individualMoves.length == 1) {
+            moves.add(individualMoves[0] + " takeback");
+            String previousMoveStart;
+            if (getCurrentPlayer().getColor() == Piece.Color.GOLD){
+                turnCount--;
+                previousMoveStart = turnCount + "s";
+            } else {
+                previousMoveStart = turnCount + "g";
+            }
+            for (int i = moves.size() - 2; i >= 0; i--) {
+                String previousMoveString = moves.get(i);
+                if (previousMoveString.startsWith(previousMoveStart)) {
+                    moves.add(previousMoveString);
+                    break;
+                }
+            }
+            undoLastMove();
+            getCurrentPlayer().submitMove = true;
+        } else {
+            for (int i = individualMoves.length - 1; i >= 1; i--) { // Start from 1 to skip the turn count and player char
+                String move = individualMoves[i];
+                char pieceType = move.charAt(0);
+                char column = move.charAt(1);
+                int row = Character.getNumericValue(move.charAt(2));
+                char action = move.charAt(3);
+
+                Square square = board.grid[column - 'a'][row - 1];
+                Piece piece;
+
+                if (action == 'x') {
+                    piece = new Piece(square, pieceType, getCurrentPlayer().getColor());
+                    board.placePiece(piece, square);
+                } else {
+                    Square destinationSquare = switch (action) {
+                        case 'n' -> board.grid[column - 'a'][row];
+                        case 's' -> board.grid[column - 'a'][row - 2];
+                        case 'e' -> board.grid[column - 'a' + 1][row - 1];
+                        default -> // 'w'
+                                board.grid[column - 'a' - 1][row - 1];
+                    };
+                    piece = destinationSquare.getPiece();
+                    destinationSquare.setPiece(null);
+                    square.setPiece(piece);
+                }
+            }
+
+            if (!moves.get(moves.size()-1).endsWith(" takeback")){
+                moves.add(individualMoves[0]);
+            }
+            getCurrentPlayer().currentTurnMoves = 0;
+        }
     }
 
     public void saveGame() {
