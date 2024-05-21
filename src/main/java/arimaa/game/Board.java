@@ -78,26 +78,28 @@ public class Board {
         }
     }
 
-    public void printBoard() {
-        System.out.println("  +-----------------+");
+    public String printBoard() {
+        StringBuilder boardString = new StringBuilder();
+        boardString.append("  +-----------------+\n");
 
-        for (int row = 7; row > 0; row--) {
-            System.out.print((row + 1) + " | ");
+        for (int row = 7; row > -1; row--) {
+            boardString.append((row + 1) + " | ");
             for (int col = 0; col < 8; col++) {
                 Piece piece = grid[col][row].getPiece();
 
                 if (piece != null) {
-                    System.out.print(piece.getType() + " ");
+                    boardString.append(piece.getType() + " ");
                 } else if (grid[col][row].isTrap()) {
-                    System.out.print("x ");
+                    boardString.append("x ");
                 } else {
-                    System.out.print("  ");
+                    boardString.append("  ");
                 }
             }
-            System.out.println("|");
+            boardString.append("|\n");
         }
 
-        System.out.println("  +-----------------+");
-        System.out.println("    a b c d e f g h");
+        boardString.append("  +-----------------+\n");
+        boardString.append("    a b c d e f g h\n");
+        return boardString.toString();
     }
 }

@@ -285,6 +285,7 @@ public class Game {
                 writer.write(move);
                 writer.newLine();
             }
+            writer.write(board.printBoard());
         } catch (IOException e) {
             e.printStackTrace();
         }
