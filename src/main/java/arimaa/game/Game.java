@@ -1,11 +1,13 @@
 package src.main.java.arimaa.game;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,8 +31,8 @@ public class Game {
     }
 
     public void setupGame() {
-        players[0] = new Player(Piece.Color.GOLD, board);
-        players[1] = new Player(Piece.Color.SILVER, board);
+        players[0] = new Player(Piece.Color.GOLD);
+        players[1] = new Player(Piece.Color.SILVER);
         currentPlayerIndex = 0;
         turnCount = 1;
     }
@@ -52,7 +54,9 @@ public class Game {
         while (!isGameOver) {
             for (int i = 0; i < 2; i++) {
                 Player currentPlayer = getCurrentPlayer();
-                moves.add(turnCount + (currentPlayer.getColor() == Piece.Color.GOLD ? "g" : "s"));
+                if (!moves.getLast().startsWith(turnCount + (currentPlayer.getColor() == Piece.Color.GOLD ? "g" : "s"))){
+                    moves.add(turnCount + (currentPlayer.getColor() == Piece.Color.GOLD ? "g" : "s"));
+                }
                 checkWinConditions();
                 if (!isGameOver){
                     System.out.println("It's " + currentPlayer.getColor() + "'s turn.");
@@ -151,7 +155,12 @@ public class Game {
                 }
             }
         }
-        moves.add(turnCount + (currentPlayer.getColor() == Piece.Color.GOLD ? "g " : "s ") + playerSetup.toString().trim());
+        if (currentPlayer.getColor() == Piece.Color.GOLD) {
+            moves.add(turnCount + "g " + playerSetup.toString().trim());
+            moves.add(turnCount + "s ");
+        } else {
+            addToMove(playerSetup.toString().trim());
+        }
         System.out.println("Player " + (currentPlayerIndex+1) + " submitted their pieces.");
     }
 
@@ -291,8 +300,50 @@ public class Game {
         }
     }
 
-    public void loadGame() {
-        //
+    public void loadGame(File file) {
+        try {
+            List<String> lines = Files.readAllLines(file.toPath());
+            List<String> boardPrint = new ArrayList<>();
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
+                if (i < lines.size() - 11) {
+                    moves.add(line);
+                } else {
+                    boardPrint.add(line);
+                }
+            }
+
+            if (moves.size() >= 3) {
+                setupPhase = false;
+                players[0].submitSetup = true;
+                players[1].submitSetup = true;
+            } else if (moves.size() == 2) {
+                players[0].submitSetup = true;
+            }
+
+            String lastMoveLine = moves.getLast();
+            String[] lastMoveParts = lastMoveLine.split(" ");
+            turnCount = Integer.parseInt(lastMoveParts[0].substring(0, lastMoveParts[0].length() - 1));
+            currentPlayerIndex = lastMoveParts[0].endsWith("g") ? 0 : 1;
+
+            getCurrentPlayer().currentTurnMoves = (int) Arrays.stream(lastMoveParts).skip(1).filter(move -> !move.endsWith("x")).count();
+
+            for (int i = 0; i < 8; i++) {
+                String line = lines.get(lines.size() - 10 + i);
+                for (int j = 0; j < 8; j++) {
+                    char pieceChar = line.charAt(4 + j * 2);
+                    if (pieceChar != ' ' && pieceChar != 'x') {
+                        Piece.Color color = Character.isUpperCase(pieceChar) ? Piece.Color.GOLD : Piece.Color.SILVER;
+                        Piece piece = new Piece(null, pieceChar, color);
+                        board.placePiece(piece, board.grid[j][7 - i]);
+                    } else {
+                        board.placePiece(null, board.grid[j][7 - i]);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Player getCurrentPlayer() {

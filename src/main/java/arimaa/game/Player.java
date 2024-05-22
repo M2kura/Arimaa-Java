@@ -10,9 +10,8 @@ public class Player {
     private Piece pieceForPP;
     private Piece pieceToMove;
 
-    public Player(Piece.Color color, Board board) {
+    public Player(Piece.Color color) {
         this.color = color;
-        board.defaultSetUp(color);
     }
 
     public Piece.Color getColor() {

@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class MainPage extends JFrame{
     private Image backgroundImage;
@@ -69,8 +70,18 @@ public class MainPage extends JFrame{
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implement the logic to load a game
-                System.out.println("Load Game button clicked");
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File("Save files")); // Set the default directory to "Save files"
+                int result = fileChooser.showOpenDialog(MainPage.this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    Game game = new Game();
+                    game.loadGame(selectedFile);
+                    GameGUI gameGUI = new GameGUI(game, MainPage.this);
+                    gameGUI.startGame();
+                    gameGUI.setVisible(true);
+                    setVisible(false);
+                }
             }
         });
         exitButton.addActionListener(new ActionListener() {

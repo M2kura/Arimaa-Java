@@ -12,6 +12,8 @@ public class Board {
                 grid[col][row] = new Square((char) ('a' + col), row + 1, isTrap);
             }
         }
+        defaultSetUp(Piece.Color.GOLD);
+        defaultSetUp(Piece.Color.SILVER);
     }
 
     public void defaultSetUp(Piece.Color color) {
