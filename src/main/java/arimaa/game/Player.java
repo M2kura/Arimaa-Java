@@ -59,7 +59,7 @@ public class Player {
         pieceToMove = piece;
     }
 
-    private void emptyPieceSelection() {
+    public void emptyPieceSelection() {
         pieceForPP = null;
         pieceToMove = null;
     }

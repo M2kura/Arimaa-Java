@@ -7,10 +7,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import src.main.java.arimaa.game.Bot;
+import src.main.java.arimaa.game.Piece;
 
 public class MainPage extends JFrame{
-    private Image backgroundImage;
-
     public MainPage() {
         setTitle("Arimaa Game");
         setSize(800, 800);
@@ -52,7 +52,25 @@ public class MainPage extends JFrame{
         botButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Leave this empty for now
+                Object[] options = {"Gold", "Silver"};
+                int n = JOptionPane.showOptionDialog(MainPage.this,
+                        "Do you want to start as Gold or Silver?",
+                        "Choose your color",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+                Game game = new Game();
+                GameGUI gameGUI = new GameGUI(game, MainPage.this);
+                if (n == JOptionPane.YES_OPTION) {
+                    game.players[1] = new Bot(game, Piece.Color.SILVER, gameGUI.getBoardPanel());
+                } else if (n == JOptionPane.NO_OPTION) {
+                    game.players[0] = new Bot(game, Piece.Color.GOLD, gameGUI.getBoardPanel());
+                }
+                gameGUI.startGame();
+                gameGUI.setVisible(true);
+                setVisible(false);
             }
         });
 
@@ -76,8 +94,13 @@ public class MainPage extends JFrame{
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     Game game = new Game();
-                    game.loadGame(selectedFile);
                     GameGUI gameGUI = new GameGUI(game, MainPage.this);
+                    game.loadGame(selectedFile);
+                    if (selectedFile.getName().contains("Bot_G")) {
+                        game.players[0] = new Bot(game, Piece.Color.GOLD, gameGUI.getBoardPanel());
+                    } else if (selectedFile.getName().contains("Bot_S")) {
+                        game.players[1] = new Bot(game, Piece.Color.SILVER, gameGUI.getBoardPanel());
+                    }
                     gameGUI.startGame();
                     gameGUI.setVisible(true);
                     setVisible(false);

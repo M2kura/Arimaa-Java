@@ -69,7 +69,7 @@ public class Piece {
     }
 
     public void push(Piece other, Square newSquare, Board board) {
-        if (isWeaker(other)) {
+        if (isStronger(other)) {
             if (other.canMove(newSquare, board)){
                 Square currentSquare = other.square;
                 board.movePiece(other.square, newSquare);
@@ -83,7 +83,7 @@ public class Piece {
     }
 
     public void pull(Piece other, Square newSquare, Board board) {
-        if (isWeaker(other)) {
+        if (isStronger(other)) {
             if (this.canMove(newSquare, board)){
                 Square currentSquare = this.square;
                 board.movePiece(this.square, newSquare);
@@ -103,14 +103,14 @@ public class Piece {
         return (Math.abs(dx) == 1 && dy == 0) || (dx == 0 && Math.abs(dy) == 1);
     }
 
-    public boolean isWeaker(Piece other) {
+    public boolean isStronger(Piece other) {
         return this.strength > other.strength;
     }
 
     public boolean isFrozen(Board board) {
         for (Square adjacentSquare : square.adjacentSquares(board)) {
             Piece adjacentPiece = board.getPieceAt(adjacentSquare);
-            if (adjacentPiece != null && adjacentPiece.getColor() != color && adjacentPiece.getStrength() > strength && !hasFriendlyAdjacent(board)) {
+            if (adjacentPiece != null && adjacentPiece.getColor() != color && adjacentPiece.isStronger(this) && !hasFriendlyAdjacent(board)) {
                 return true;
             }
         }

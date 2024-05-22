@@ -48,4 +48,8 @@ public class GameGUI extends JFrame {
     public void refreshBoard() {
         boardPanel.repaint();
     }
+
+    public BoardPanel getBoardPanel() {
+        return boardPanel;
+    }
 }

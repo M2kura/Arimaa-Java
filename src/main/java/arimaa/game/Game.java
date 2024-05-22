@@ -1,5 +1,7 @@
 package src.main.java.arimaa.game;
 
+import src.main.java.arimaa.gui.BoardPanel;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -14,8 +16,8 @@ import java.time.format.DateTimeFormatter;
 
 public class Game {
     private final Board board;
-    private final Player[] players;
-    private int currentPlayerIndex;
+    public Player[] players;
+    public int currentPlayerIndex;
     private boolean isGameOver;
     private int turnCount;
     private boolean setupPhase = true;
@@ -39,15 +41,27 @@ public class Game {
 
     public void startGame() {
         while (setupPhase) {
-            if (players[0].submittedSetup() && players[1].submittedSetup()) {
-                setupPhase = false;
-                turnCount ++;
-                System.out.println("Setup phase is over.");
-            } else {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            for (int i = 0; i < 2; i++) {
+                Player currentPlayer = players[i];
+                if (currentPlayer instanceof Bot && !currentPlayer.submittedSetup()) {
+                    ((Bot) currentPlayer).makeMove();
+                } else {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (players[0].submittedSetup() && players[1].submittedSetup()) {
+                    setupPhase = false;
+                    turnCount++;
+                    System.out.println("Setup phase is over.");
+                } else {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -60,6 +74,9 @@ public class Game {
                 checkWinConditions();
                 if (!isGameOver){
                     System.out.println("It's " + currentPlayer.getColor() + "'s turn.");
+                    if (currentPlayer instanceof Bot) {
+                        ((Bot) currentPlayer).makeMove();
+                    }
                     while (!currentPlayer.submitMove) {
                         try {
                             Thread.sleep(1000);
@@ -169,6 +186,9 @@ public class Game {
     }
 
     public void playerWins() {
+        if (isGameOver) {
+            return;
+        }
         isGameOver = true;
         playerLost();
         Player previousPLayer = players[(currentPlayerIndex + 1) % 2];
@@ -181,6 +201,9 @@ public class Game {
             System.out.println("Player " + (currentPlayerIndex + 1) + " submitted their move.");
             if (getCurrentPlayer().getColor() == Piece.Color.SILVER) {
                 turnCount ++;
+            }
+            if (!moves.isEmpty() && !setupPhase) {
+                System.out.println(moves.getLast());
             }
         } else {
             System.out.println("You are supposed to do at least 1 and at most 4 moves per turn");
@@ -223,23 +246,27 @@ public class Game {
             return;
         }
         if (individualMoves.length == 1) {
-            moves.add(individualMoves[0] + " takeback");
-            String previousMoveStart;
-            if (getCurrentPlayer().getColor() == Piece.Color.GOLD){
-                turnCount--;
-                previousMoveStart = turnCount + "s";
-            } else {
-                previousMoveStart = turnCount + "g";
-            }
-            for (int i = moves.size() - 2; i >= 0; i--) {
-                String previousMoveString = moves.get(i);
-                if (previousMoveString.startsWith(previousMoveStart)) {
-                    moves.add(previousMoveString);
-                    break;
+            if (!(players[(currentPlayerIndex + 1) % 2] instanceof Bot)){
+                moves.add(individualMoves[0] + " takeback");
+                String previousMoveStart;
+                if (getCurrentPlayer().getColor() == Piece.Color.GOLD) {
+                    turnCount--;
+                    previousMoveStart = turnCount + "s";
+                } else {
+                    previousMoveStart = turnCount + "g";
                 }
+                for (int i = moves.size() - 2; i >= 0; i--) {
+                    String previousMoveString = moves.get(i);
+                    if (previousMoveString.startsWith(previousMoveStart)) {
+                        moves.add(previousMoveString);
+                        break;
+                    }
+                }
+                undoLastMove();
+                getCurrentPlayer().submitMove = true;
+            } else {
+                moves.add(lastMoveString);
             }
-            undoLastMove();
-            getCurrentPlayer().submitMove = true;
         } else {
             for (int i = individualMoves.length - 1; i >= 1; i--) { // Start from 1 to skip the turn count and player char
                 String move = individualMoves[i];
@@ -281,7 +308,14 @@ public class Game {
         String timestamp = dtf.format(now);
 
         String directoryName = "Save files";
-        String fileName = "Saved Game " + timestamp + ".txt";
+        String fileName = "Saved Game " + timestamp ;
+
+        if (players[0] instanceof Bot) {
+            fileName += " Bot_G";
+        } else if (players[1] instanceof Bot) {
+            fileName += " Bot_S";
+        }
+        fileName += ".txt";
 
         try {
             Files.createDirectories(Paths.get(directoryName));

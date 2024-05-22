@@ -40,6 +40,7 @@ public class BoardPanel extends JPanel {
                 }
             } else {
                 currentPlayer.movePiece(clickedSquare, game.getBoard());
+                currentPlayer.emptyPieceSelection();
                 repaint();
             }
         }

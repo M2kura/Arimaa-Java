@@ -29,9 +29,11 @@ public class ControlPanel extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!game.isSetupPhase()) {
+                    if (!(game.getCurrentPlayer().currentTurnMoves == 0) && game.players[(game.currentPlayerIndex + 1) % 2] instanceof  Bot){
+                        System.out.println("Move has been taken back.");
+                    }
                     game.undoLastMove();
                     gameGUI.refreshBoard();
-                    System.out.println("Move has been taken back.");
                 }
             }
         });
