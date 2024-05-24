@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"src.main.java.arimaa"},{"l":"src.main.java.arimaa.game"},{"l":"src.main.java.arimaa.gui"},{"l":"src.test.java.arimaa"}];updateSearchResults();

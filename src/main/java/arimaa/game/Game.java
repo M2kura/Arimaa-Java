@@ -1,7 +1,5 @@
 package src.main.java.arimaa.game;
 
-import src.main.java.arimaa.gui.BoardPanel;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +12,9 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a game of Arimaa.
+ */
 public class Game {
     private final Board board;
     public Player[] players;
@@ -23,6 +24,10 @@ public class Game {
     private boolean setupPhase = true;
     private final List<String> moves;
 
+    /**
+     * Constructs a new game.
+     * The board is initialized and the game is set up.
+     */
     public Game() {
         this.board = new Board(this);
         this.players = new Player[2];
@@ -32,6 +37,10 @@ public class Game {
         setupGame();
     }
 
+    /**
+     * Sets up the game.
+     * The players are created and the turn count is set to 1.
+     */
     public void setupGame() {
         players[0] = new Player(Piece.Color.GOLD);
         players[1] = new Player(Piece.Color.SILVER);
@@ -39,10 +48,14 @@ public class Game {
         turnCount = 1;
     }
 
+    /**
+     * Starts the game.
+     * The game continues until it is over.
+     */
     public void startGame() {
         while (setupPhase) {
             for (int i = 0; i < 2; i++) {
-                Player currentPlayer = players[i];
+                Player currentPlayer = getCurrentPlayer();
                 if (currentPlayer instanceof Bot && !currentPlayer.submittedSetup()) {
                     ((Bot) currentPlayer).makeMove();
                 } else {
@@ -52,16 +65,16 @@ public class Game {
                         e.printStackTrace();
                     }
                 }
-                if (players[0].submittedSetup() && players[1].submittedSetup()) {
-                    setupPhase = false;
-                    turnCount++;
-                    System.out.println("Setup phase is over.");
-                } else {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            }
+            if (players[0].submittedSetup() && players[1].submittedSetup()) {
+                setupPhase = false;
+                turnCount++;
+                System.out.println("Setup phase is over.");
+            } else {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -93,10 +106,17 @@ public class Game {
         System.out.println("Game over!");
     }
 
+    /**
+     * Switches the turn to the other player.
+     */
     public void switchTurns() {
         currentPlayerIndex = (currentPlayerIndex + 1) % 2;
     }
 
+    /**
+     * Checks the win conditions of the game.
+     * If a player has won, the game is ended.
+     */
     private void checkWinConditions() {
         for (int col = 0; col < 8; col++) {
             Piece piece = board.getPieceAt(board.grid[col][7]);
@@ -158,6 +178,10 @@ public class Game {
         }
     }
 
+    /**
+     * Submits the setup of a player.
+     * The pieces are placed and player is going to start with this position.
+     */
     public void submitPlayerSetup() {
         Player currentPlayer = players[currentPlayerIndex];
         currentPlayer.submitSetup = true;
@@ -181,10 +205,16 @@ public class Game {
         System.out.println("Player " + (currentPlayerIndex+1) + " submitted their pieces.");
     }
 
+    /**
+     * Writes " lost" to the last move, when player loses the game.
+     */
     public void playerLost() {
         addToMove(" lost");
     }
 
+    /**
+     * Ends the game because a player has won.
+     */
     public void playerWins() {
         if (isGameOver) {
             return;
@@ -195,6 +225,10 @@ public class Game {
         System.out.println(previousPLayer.getColor() + " player wins!");
     }
 
+    /**
+     * Submits a player's move.
+     * The pieces moves during this turn will be written in the text field.
+     */
     public void submitPlayerMove() {
         if (getCurrentPlayer().currentTurnMoves > 0 && getCurrentPlayer().currentTurnMoves < 5) {
             getCurrentPlayer().submitMove = true;
@@ -210,6 +244,13 @@ public class Game {
         }
     }
 
+    /**
+     * Adds a piece's move to the list of moves in the appropriate text form.
+     *
+     * @param piece The piece to move.
+     * @param from The square the piece is moving from.
+     * @param to The square the piece is moving to.
+     */
     public void movePiece(Piece piece, Square from, Square to) {
         char action;
         if (from.getColumn() == to.getColumn()) {
@@ -228,6 +269,11 @@ public class Game {
         addToMove(" " + piece.getType() + from.toString() + action);
     }
 
+    /**
+     * Add some text to the last move line.
+     *
+     * @param changes The changes to add.
+     */
     public void addToMove(String changes) {
         int lastString = moves.size() - 1;
         String lastMove = moves.get(lastString);
@@ -235,10 +281,19 @@ public class Game {
         moves.set(lastString, lastMove);
     }
 
+    /**
+     * Adds a piece removal to the moves list.
+     *
+     * @param piece The piece to remove.
+     * @param from The square the piece is removed from.
+     */
     public void removePiece(Piece piece, Square from) {
         addToMove(" " + piece.getType() + from.toString() + "x");
     }
 
+    /**
+     * Undoes the last move.
+     */
     public void undoLastMove() {
         String lastMoveString = moves.removeLast();
         String[] individualMoves = lastMoveString.split(" ");
@@ -302,6 +357,9 @@ public class Game {
         }
     }
 
+    /**
+     * Saves the game to a file.
+     */
     public void saveGame() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yy HH.mm");
         LocalDateTime now = LocalDateTime.now();
@@ -334,6 +392,11 @@ public class Game {
         }
     }
 
+    /**
+     * Loads a game from a file.
+     *
+     * @param file The file to load the game from.
+     */
     public void loadGame(File file) {
         try {
             List<String> lines = Files.readAllLines(file.toPath());
@@ -380,27 +443,48 @@ public class Game {
         }
     }
 
+    /**
+     * Returns the current player.
+     *
+     * @return The current player.
+     */
     public Player getCurrentPlayer() {
         return players[currentPlayerIndex];
     }
 
+    /**
+     * Returns the game board.
+     *
+     * @return The game board.
+     */
     public Board getBoard() {
         return board;
     }
 
+    /**
+     * Returns whether the game is over.
+     *
+     * @return true if the game is over, false otherwise.
+     */
     public boolean isGameOver() {
         return isGameOver;
     }
 
-    public int getTurnCount() {
-        return turnCount;
-    }
-
+    /**
+     * Returns whether the game is in the setup phase.
+     *
+     * @return true if the game is in the setup phase, false otherwise.
+     */
     public boolean isSetupPhase() {
         return setupPhase;
     }
 
-    public Player getPlayer (int index) {
-        return players[index];
+    /**
+     * Returns the current turn count.
+     *
+     * @return The current turn count.
+     */
+    public int getTurnCount() {
+        return turnCount;
     }
 }

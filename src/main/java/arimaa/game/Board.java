@@ -1,9 +1,20 @@
 package src.main.java.arimaa.game;
 
+
+/**
+ * Represents the game board in an Arimaa game.
+ * The board is an 8x8 grid of squares, and each square can hold a piece.
+ */
 public class Board {
     public Square[][] grid = new Square[8][8];
     public Game game;
 
+    /**
+     * Constructs a new board for the given game.
+     * The board is initialized with a default setup of pieces.
+     *
+     * @param game The game that this board is part of.
+     */
     public Board(Game game) {
         this.game = game;
         for (int row = 0; row < 8; row++) {
@@ -16,6 +27,11 @@ public class Board {
         defaultSetUp(Piece.Color.SILVER);
     }
 
+    /**
+     * Sets up the pieces for a player in their default starting positions.
+     *
+     * @param color The color of the player to set up.
+     */
     public void defaultSetUp(Piece.Color color) {
         int row = (color == Piece.Color.GOLD) ? 0 : 7;
         this.placePiece(new Piece(this.grid[0][row], 'C', color), this.grid[0][row]);
@@ -34,6 +50,12 @@ public class Board {
         }
     }
 
+    /**
+     * Switches the positions of two pieces on the board.
+     *
+     * @param square1 The square of the first piece.
+     * @param square2 The square of the second piece.
+     */
     public void switchPieces(Square square1, Square square2) {
         Piece piece1 = getPieceAt(square1);
         Piece piece2 = getPieceAt(square2);
@@ -45,14 +67,32 @@ public class Board {
         }
     }
 
+    /**
+     * Places a piece on a square of the board.
+     *
+     * @param piece The piece to place.
+     * @param square The square to place the piece on.
+     */
     public void placePiece(Piece piece, Square square) {
         grid[square.getColumn() - 'a'][square.getRow() - 1].setPiece(piece);
     }
 
+    /**
+     * Returns the piece at a given square.
+     *
+     * @param square The square to check.
+     * @return The piece at the given square, or null if the square is empty.
+     */
     public Piece getPieceAt(Square square) {
         return grid[square.getColumn() - 'a'][square.getRow() - 1].getPiece();
     }
 
+    /**
+     * Moves a piece from one square to another.
+     *
+     * @param from The square the piece is moving from.
+     * @param to The square the piece is moving to.
+     */
     public void movePiece(Square from, Square to) {
         Piece piece = getPieceAt(from);
         if (piece.canMove(to, this)){
@@ -65,6 +105,9 @@ public class Board {
         }
     }
 
+    /**
+     * Checks all the trap squares on the board and removes any trapped pieces.
+     */
     public void checkTraps() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -80,6 +123,11 @@ public class Board {
         }
     }
 
+    /**
+     * Returns a text print of the board.
+     *
+     * @return A string representation of the board.
+     */
     public String printBoard() {
         StringBuilder boardString = new StringBuilder();
         boardString.append("  +-----------------+\n");

@@ -10,7 +10,18 @@ import java.io.File;
 import src.main.java.arimaa.game.Bot;
 import src.main.java.arimaa.game.Piece;
 
+/**
+ * Represents the main page of the Arimaa game application.
+ * The main page includes buttons for starting a new game, loading a game, and exiting the application.
+ * The main page also includes buttons for choosing to play with a friend or with a bot, which are initially hidden.
+ */
 public class MainPage extends JFrame{
+
+    /**
+     * Constructs a new main page.
+     * The main page includes buttons for starting a new game, loading a game, and exiting the application.
+     * The main page also includes buttons for choosing to play with a friend or with a bot, which are initially hidden.
+     */
     public MainPage() {
         setTitle("Arimaa Game");
         setSize(800, 800);
@@ -30,6 +41,10 @@ public class MainPage extends JFrame{
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                /**
+                 * Handles the action of clicking the back button.
+                 * The friend and bot buttons are hidden, and the start, load, and exit buttons are shown.
+                 */
                 startButton.setVisible(true);
                 loadButton.setVisible(true);
                 exitButton.setVisible(true);
@@ -40,6 +55,10 @@ public class MainPage extends JFrame{
         });
 
         friendButton.addActionListener(new ActionListener() {
+            /**
+             * Handles the action of clicking the friend button.
+             * A new game GUI is created for a new game with two human players and the main page is hidden.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 Game game = new Game();
@@ -49,7 +68,13 @@ public class MainPage extends JFrame{
                 setVisible(false);
             }
         });
+
         botButton.addActionListener(new ActionListener() {
+            /**
+             * Handles the action of clicking the bot button.
+             * The user is asked to choose their color.
+             * A new game GUI is created for a new game with one human player and one bot player and the main page is hidden.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 Object[] options = {"Gold", "Silver"};
@@ -75,6 +100,10 @@ public class MainPage extends JFrame{
         });
 
         startButton.addActionListener(new ActionListener() {
+            /**
+             * Handles the action of clicking the start button.
+             * The start, load, and exit buttons are hidden, and the friend and bot buttons are shown.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 startButton.setVisible(false);
@@ -86,6 +115,11 @@ public class MainPage extends JFrame{
             }
         });
         loadButton.addActionListener(new ActionListener() {
+            /**
+             * Handles the action of clicking the load button.
+             * The user is asked to choose a save file to load.
+             * If the user chooses a save file, a new game GUI is created for the loaded game and the main page is hidden.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -108,6 +142,10 @@ public class MainPage extends JFrame{
             }
         });
         exitButton.addActionListener(new ActionListener() {
+            /**
+             * Handles the action of clicking the exit button.
+             * The application is exited.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0); // Exit the application
