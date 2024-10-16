@@ -1,18 +1,49 @@
-Arimaa Game
+# Arimaa Game
 
-Arimaa is a strategic two-player board game, enjoyable yet challenging, designed to be playable with a standard chess set. The main objective is to maneuver one's rabbit to the opponent's home rank. Wins can also occur through capturing all opponent's rabbits or blocking all legal moves.
+**Arimaa** is a strategic two-player board game, designed to be playable with a standard chess set. 
 
-Features
+The main objective is to maneuver one's rabbit to the opponent's home rank. Wins can also occur through capturing all opponent's rabbits or blocking all legal moves.
 
-Save/Load Game: Allows saving game progress and loading it later.
-Takeback Moves: Players can undo their previous moves.
-Play with Bot: Engage in games against a computer-controlled opponent.
-How to Play
+## Features
 
-Players initially place their pieces on their respective home rows. Gameplay involves moving pieces one square at a time unless the piece is frozen or the square is occupied. Control is executed by clicking on a piece to select it, then clicking on the destination square. Each turn allows up to four moves, which can involve moving one piece multiple times or different pieces, as long as the total number of squares moved does not exceed four. Strategic elements include pushing/pulling opponents’ weaker pieces and avoiding trap squares that remove pieces from play unless supported by adjacent friendly pieces.
+* **Save/Load Game**:  
+Allows saving game in it's current state and later load it from the main menu by picking the corespondent save file.
 
-Installation Instructions
+* **Takeback Moves**:  
+Players can undo their moves up to the begging of the game. (*Move* - all of the interactions with the pieces during the players turn)
 
-Step 1: Clone the repository to your local machine.
-Step 2: Open the project in an IDE or a command line tool.
-Step 3: Navigate to the src directory and run the main class to start the game.
+* **Play with Bot**:  
+In the main menu you can choose a game with a bot. This will start a game with a quite primitive computer, that makes totally random moves.
+
+## How to Play
+
+### Setting phase
+
+Right after you start a new game, there's a pieces setting phase, where the gold gets to setup his pieces, then silver do the same.  
+> To choose pieces you want to swap, just click on the first pieces, then click on the the second one.
+
+Don't forget to submit the setting by clicking on 'submit' button!
+
+### Game phase
+
+// Add content
+
+### Win conditions
+
+// Add content
+
+### Save game
+
+// Add content
+
+## Installation and Running
+
+**Step 1**: Clone the repository.
+
+```git clone https://github.com/M2kura/Arimaa-Java.git```
+
+**Step 2**: Open the project folder in your IDE. I recommend using IntelliJ IDEA.
+
+**Step 3**: Navigate to src/main/java/arimma and run the Main class to start the game.
+
+Tip: On the first start, the build might fail due to the missing libraries installed localy. Just follow the errors in the code that will show you which libraries you need to download, usually it's **junit** and/or **jupiter**
